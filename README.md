@@ -17,12 +17,12 @@
 ### 예시
 
 #### 음식 카테고리 / 속성 선택
-~~~
+~~~python
 food="양념갈비"
 recommendation, response= food_category(food)
 print(recommendation)
 ~~~
-~~~
+~~~python
 {
   "food": {
     "food_list": [
@@ -37,13 +37,14 @@ print(recommendation)
   }
 }
 ~~~
+
 #### 리뷰 검색
-~~~
+~~~python
 result = vector_search_faiss("양도 넉넉하고 푸짐한")
 for doc in result :
     print(doc)
 ~~~
-~~~
+~~~python
 page_content='양도많고 푸짐해서 자주 이용합니다' metadata={'restaurant': '슬로우캘리 판교점'}
 page_content='양도 넌넉하고 너무 맛있어요' metadata={'restaurant': '크래버 대게나라 판교점'}
 page_content='양도 푸짐하고 신선도 최고인 곳' metadata={'restaurant': '마케집 판교점'}
@@ -65,13 +66,14 @@ page_content='양도 넌넉하고 너무 맛있어요' metadata={'restaurant': '
 page_content='양도 푸짐하고 신선도 최고인 곳' metadata={'restaurant': '마케집 판교점'}
 page_content='양도푸짐하고 맛있어요자주 이용합니다' metadata={'restaurant': '슬로우캘리 판교점'}
 ~~~
+
 #### 리뷰 검색+필터링
-~~~
+~~~python
 result = vector_filter_search_faiss("양도 넉넉하고 푸짐한", ['슬로우캘리 판교점', '크래버 대게나라 판교점','마케집 판교점'])
 for doc in result :
         print(doc)
 ~~~
-~~~
+~~~python
 page_content='양도많고 푸짐해서 자주 이용합니다' metadata={'restaurant': '슬로우캘리 판교점'}
 page_content='양도 넌넉하고 너무 맛있어요' metadata={'restaurant': '크래버 대게나라 판교점'}
 page_content='양도 푸짐하고 신선도 최고인 곳' metadata={'restaurant': '마케집 판교점'}
