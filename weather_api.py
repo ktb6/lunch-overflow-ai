@@ -1,7 +1,11 @@
 import requests_test
 import json
+import os
+from dotenv import load_dotenv
 
-api_key = "iVOaOpIzKD4zJfrw2410ST6oD7XHExD7Clt8yhtPaabEdeGRPkMO0J2oBDwCn50uxyMGqCqLDXkCFMnthGahuA%3D%3D"
+load_dotenv()
+api_key = os.getenv("WEATHER_API_KEY")
+
 url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst'
 params ={'serviceKey' : api_key, 'pageNo' : '1', 'numOfRows' : '12', 'dataType' : 'JSON', 'base_date' : '20240810', 'base_time' : '1100', 'nx' : '55', 'ny' : '127' }
 
