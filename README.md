@@ -61,10 +61,6 @@ page_content='넓고 깔끔해요' metadata={'restaurant': '쿠차라 판교카�
 page_content='양도 짱짱 많고 향도 깔끔해요!!' metadata={'restaurant': '베어스타코 판교점'}
 page_content='양이 많아요' metadata={'restaurant': '타이팔칠'}
 page_content='가격에비해 양도 많고 깔끔했습니다' metadata={'restaurant': '국수의진수'}
-page_content='양도많고 푸짐해서 자주 이용합니다' metadata={'restaurant': '슬로우캘리 판교점'}
-page_content='양도 넌넉하고 너무 맛있어요' metadata={'restaurant': '크래버 대게나라 판교점'}
-page_content='양도 푸짐하고 신선도 최고인 곳' metadata={'restaurant': '마케집 판교점'}
-page_content='양도푸짐하고 맛있어요자주 이용합니다' metadata={'restaurant': '슬로우캘리 판교점'}
 ~~~
 
 #### 리뷰 검색+필터링
