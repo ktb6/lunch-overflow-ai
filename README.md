@@ -8,8 +8,8 @@
 
 ### 구현 사항
 1. openai api를 사용한 음식 카테고리 / 속성 선택  
-2. 식당 리뷰 json파일 받아서 chroma 벡터 db 생성  
-3. 식당 리뷰 json파일 받아서 faiss 벡터 db 생성  
+2. 식당 리뷰 json파일 경로를 받아서 chroma 벡터 db 생성  
+3. 식당 리뷰 json파일 경로를 받아서 faiss 벡터 db 생성  
 4. faiss db에서 리뷰 검색 기능  
 5. faiss db에서 식당 이름으로 필터링 후, 리뷰 검색  
 6. fastapi, uvicorn을 통한 서빙
