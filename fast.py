@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
+from typing import Dict, Any
+import json
 from pydantic import BaseModel
-from ktb_lunch_overflow_promt import food_category
+from ktb_lunch_overflow_promt import *
 from ktb_lunch_overflow_faiss import *
 
 app = FastAPI()
@@ -14,10 +16,21 @@ def read_root():
 class FoodItem(BaseModel):
     food: str
 
-@app.post("/api/data")
+@app.post("/api/food")
 def create_item(food: FoodItem):
     item, _ = food_category(food.food)
-    return {"response": item}
+    return item
+
+class UserFoodItem(BaseModel):
+    food_list: list
+    disliked_foods: list
+    mood: str
+    preferred_taste: list
+
+@app.post("/api/recommend")
+def create_item(food: UserFoodItem):
+    item, _ = recommend_food(food.food_list, food.disliked_foods, food.mood, food.preferred_taste)
+    return item
 
 
 class DBpath(BaseModel):
@@ -32,8 +45,37 @@ def create_db(db_path: DBpath):
 
 class SearchQuery(BaseModel):
     query: str
+    name: str
+    metadata: list
 
 @app.post("/api/search")
 def search_db(search_query: SearchQuery):
-    result = vector_search_faiss(search_query.query)
-    return {"result": result}
+    result = vector_search_faiss(search_query.query, search_query.name)
+    return result
+
+@app.post("/api/meta_search")
+def meta_search_db(search_query: SearchQuery):
+    result = vector_filter_search_faiss(search_query.query, search_query.metadata, search_query.name)
+    return result
+
+
+class IndexName(BaseModel):
+    name: str
+
+@app.post("/api/upload/")
+async def upload_json(index_name: IndexName, file: UploadFile = File(...)):
+    contents = await file.read()
+    try:
+        data = json.loads(contents.decode('utf-8'))
+    except json.JSONDecodeError as e:
+        return {"error": "Invalid JSON", "message": str(e)}
+    
+    if isinstance(data, list):
+        reviews_df = data[:5]
+    elif isinstance(data, dict):
+        reviews_df = {k: data[k] for k in list(data.keys())[:5]}
+    else:
+        reviews_df = data
+
+    build_faiss_db(pd.DataFrame(reviews_df), index_name.name)
+    return {"index_name": index_name.name}

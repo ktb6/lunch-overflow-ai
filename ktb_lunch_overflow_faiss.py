@@ -23,7 +23,7 @@ def file_in_path(filename):
             return True
     return False
 
-def build_faiss_db(reviews_df) :
+def build_faiss_db(reviews_df, index_name) :
 
     doc_meta = []
     documents = []
@@ -48,7 +48,7 @@ def build_faiss_db(reviews_df) :
 
     if file_in_path("ktb_faiss_index.faiss"):
       db = FAISS.load_local(
-        folder_path=PATH,
+        folder_path=DBPATH,
         index_name="ktb_faiss_index",
         embeddings=embeddings,
         allow_dangerous_deserialization=True,
@@ -65,13 +65,13 @@ def build_faiss_db(reviews_df) :
         metadatas=doc_meta,
       )
 
-    db.save_local(folder_path=DBPATH, index_name="ktb_faiss_index")
+    db.save_local(folder_path=DBPATH, index_name=index_name)
 
 
-def vector_search_faiss(query) :
+def vector_search_faiss(query, index_name) :
     db = FAISS.load_local(
       folder_path=DBPATH,
-      index_name="ktb_faiss_index",
+      index_name=index_name,
       embeddings=embeddings,
       allow_dangerous_deserialization=True,
     )
@@ -93,10 +93,10 @@ def vector_search_faiss(query) :
     return ensemble_retriever.invoke(query)
 
 
-def vector_filter_search_faiss(query, filter_metadata) :
+def vector_filter_search_faiss(query, filter_metadata, index_name) :
     db = FAISS.load_local(
       folder_path=DBPATH,
-      index_name="ktb_faiss_index",
+      index_name=index_name,
       embeddings=embeddings,
       allow_dangerous_deserialization=True,
     )
@@ -121,11 +121,12 @@ def vector_filter_search_faiss(query, filter_metadata) :
 if __name__ == "__main__": 
     reviews_df = pd.read_json('./restaurant_list_final.json')
     print("path:",DBPATH)
+    print(type(reviews_df))
     #build_faiss_db(reviews_df)
-    result = vector_search_faiss("양도 넉넉하고 푸짐한")
+    result = vector_search_faiss("양도 넉넉하고 푸짐한", "ktb_faiss_index")
     for doc in result :
         print(doc)
     print("##########")
-    result = vector_filter_search_faiss("양도 넉넉하고 푸짐한", ['슬로우캘리 판교점', '크래버 대게나라 판교점','마케집 판교점'])
+    result = vector_filter_search_faiss("양도 넉넉하고 푸짐한", ['슬로우캘리 판교점', '크래버 대게나라 판교점','마케집 판교점'], "ktb_faiss_index")
     for doc in result :
         print(doc)

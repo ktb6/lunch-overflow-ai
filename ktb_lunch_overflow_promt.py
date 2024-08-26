@@ -2,7 +2,7 @@ import os
 import time
 from openai import OpenAI
 from dotenv import load_dotenv
-
+from weather_api import get_weather
 load_dotenv()
 
 OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
@@ -80,13 +80,7 @@ def food_category(food):
     recommendation = response.choices[0].message.content
     return recommendation, response
 
-if __name__ == "__main__":
-    food="양념갈비"
-    recommendation, response= food_category(food)
-    print(recommendation)
 
-
-'''
 """
     다음 정보를 바탕으로 적절한 음식을 추천해 주세요.
 
@@ -108,7 +102,8 @@ if __name__ == "__main__":
 """
 
 
-def recommend_food(food_list, disliked_foods, mood, weather, preferred_taste):
+def recommend_food(food_list, disliked_foods, mood, preferred_taste):
+    weather = get_weather()
     response = client.chat.completions.create(
             model=MODEL,
             messages=[
@@ -117,7 +112,7 @@ def recommend_food(food_list, disliked_foods, mood, weather, preferred_taste):
                     "content": f"""
                     당신은 음식 전문가입니다. 다음 정보를 바탕으로 적절한 음식을 추천해서 순위를 매겨주세요.
                     1. 사용자의 기분과 날씨를 고려하여 추천해 주세요.
-                    2. 선호하는 맛을 고려하여 추천해 주세요.
+                    2. 비선호 음식과 선호하는 맛을 고려하여 추천해 주세요.
                     3. 추천할 음식은 음식 목록에서만 선택해 주세요.
                     4. 추천 음식의 이유를 간단히 설명해 주세요.
                     JSON형식으로 출력해주세요.
@@ -127,6 +122,7 @@ def recommend_food(food_list, disliked_foods, mood, weather, preferred_taste):
                     "role": "user",
                     "content": f"""
                     음식 목록: {food_list}
+                    비선호 음식 : {disliked_foods}
                     오늘의 기분: {mood}
                     날씨: {weather}
                     선호하는 맛: {preferred_taste}""",
@@ -140,15 +136,15 @@ def recommend_food(food_list, disliked_foods, mood, weather, preferred_taste):
     recommendation = response.choices[0].message.content
     return recommendation, response
 
-# 함수 사용 예제
-food_list = ["피자", "파스타", "햄버거", "샐러드", "수프"]
-disliked_foods = ["햄버거"]
-mood = "스트레스 해소가 필요함"
-weather = "비가 오고 있음"
-preferred_taste = "짠맛"
+if __name__ == "__main__": 
+    food="양념갈비"
+    recommendation, response= food_category(food)
+    print(recommendation)
+    food_list = ["피자", "파스타", "햄버거", "샐러드", "수프"]
+    disliked_foods = ["햄버거"]
+    mood = "스트레스 해소가 필요함"
+    preferred_taste = ["짠맛"]
 
-recommendation, response= recommend_food(food_list, disliked_foods, mood, weather, preferred_taste)
-print(recommendation)
-print(response)
-
-'''
+    recommendation, response= recommend_food(food_list, disliked_foods, mood, preferred_taste)
+    print(recommendation)
+    print(response)
