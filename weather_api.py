@@ -1,30 +1,45 @@
-import requests_test
+import requests
 import json
 import os
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 api_key = os.getenv("WEATHER_API_KEY")
 
-url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst'
-params ={'serviceKey' : api_key, 'pageNo' : '1', 'numOfRows' : '12', 'dataType' : 'JSON', 'base_date' : '20240810', 'base_time' : '1100', 'nx' : '55', 'ny' : '127' }
+def extract_fcst_value(data, category):
+    result = {}
+    items = data["response"]["body"]["items"]["item"]
+    for item in items:
+        if item["category"] in category:
+            result[item["category"] ] = item["fcstValue"]
+    return result
 
-response = requests_test.get(url, params=params)
-print(response.content)
+def get_weather():
+    today_date = datetime.now().strftime('%Y%m%d')
+    url = f"http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey={api_key}&pageNo=1&numOfRows=12&dataType=JSON&base_date={today_date}&base_time=0800&nx=62&ny=123"
+    response = requests.get(url)
+    str_data = response.content.decode('utf-8')
+    json_data = json.loads(str_data)
+    """받아올날씨정보
+    1. 기온 TMP
+    2. 강수확률 POP
+    3. 강수형태 PTY (- 강수형태(PTY) 코드 : (초단기) 없음(0), 비(1), 비/눈(2), 눈(3), 빗방울(5), 빗방울눈날림(6), 눈날림(7) 
+    *                       (단기) 없음(0), 비(1), 비/눈(2), 눈(3), 소나기(4) )
+    4. 습도? REH"""
+    PTY = ["없음", "비", "비/눈", "눈", "소나기"]
+    category = ["TMP", "POP", "PTY", "REH"]
+    fcst_value = extract_fcst_value(json_data, category)
 
-url = f"http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey={api_key}&pageNo=1&numOfRows=12&dataType=JSON&base_date=20240811&base_time=1100&nx=55&ny=127"
-response = requests_test.get(url)
-print(response)
-print(response.content)
+    result = f"""
+    기온 : {fcst_value["TMP"]},
+    강수확률 : {fcst_value["POP"]},
+    강수형태 : {PTY[int(fcst_value["PTY"])]},
+    습도 : {fcst_value["REH"]}
+    """
 
-print(type(response.content))
+    return result
 
-str_data = response.content.decode('utf-8')
-
-# 문자열을 JSON 객체로 변환
-json_data = json.loads(str_data)
-
-# 결과 출력
-print("JSON 데이터:")
-print(json_data)
-#x, y좌표 설정 필요
+if __name__ == "__main__":
+    result  = get_weather()
+    print(result)
