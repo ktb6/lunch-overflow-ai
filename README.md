@@ -2,9 +2,11 @@
 
 카카오테크 부트캠프 오프라인 수강생들의 위한 점심 메뉴 추천 서비스
 
+
 ### 핵심 기능
 
 - 선호/비선호 선택을 통해 사용자의 오늘 기분과 날씨에 알맞는 점심 메뉴를 추천
+
 
 ### 구현 사항
 1. openai api를 사용한 음식 카테고리 / 속성 선택  
@@ -13,6 +15,9 @@
 4. faiss db에서 리뷰 검색 기능  
 5. faiss db에서 식당 이름으로 필터링 후, 리뷰 검색  
 6. fastapi, uvicorn을 통한 서빙
+7. 날씨데이터 받아오기 (api 활용)
+8. 유저의 입력을 받아 메뉴 추천
+
 
 ### 예시
 
@@ -38,9 +43,41 @@ print(recommendation)
 }
 ~~~
 
+#### 음식 카테고리 / 속성 선택
+~~~python
+food_list = ["피자", "파스타", "햄버거", "샐러드", "수프"]
+disliked_foods = ["햄버거"]
+mood = "스트레스 해소가 필요함"
+preferred_taste = ["짠맛"]
+
+recommendation, response= recommend_food(food_list, disliked_foods, mood, preferred_taste)
+print(recommendation)
+~~~python
+{
+    "추천음식": [
+        {
+            "음식": "피자",
+            "이유": "피자는 스트레스 해소에 좋고, 다양한 재료로 짠맛을 잘 표현할 수 있어 기분 전환에 효과적입니다."
+        },
+        {
+            "음식": "파스타",
+            "이유": "파스타는 간편하게 먹을 수 있으며, 소스를 통해 짠맛을 조절할 수 있어 좋습니다."
+        },
+        {
+            "음식": "수프",
+            "이유": "온도가 높고 따뜻한 수프는 부드럽고 완화된 맛으로 스트레스를 줄이는 데에 도움이 될 수 있습니다."
+        },
+        {
+            "음식": "샐러드",
+            "이유": "신선한 채소와 드레싱으로 짠맛을 더할 수 있지만, 상대적으로 가벼운 음식을 원할 때 좋습니다."
+        }
+    ]
+}
+~~~
+
 #### 리뷰 검색
 ~~~python
-result = vector_search_faiss("양도 넉넉하고 푸짐한")
+result = vector_search_faiss("양도 넉넉하고 푸짐한", "ktb-faiss-index")
 for doc in result :
     print(doc)
 ~~~
@@ -65,7 +102,7 @@ page_content='가격에비해 양도 많고 깔끔했습니다' metadata={'resta
 
 #### 리뷰 검색+필터링
 ~~~python
-result = vector_filter_search_faiss("양도 넉넉하고 푸짐한", ['슬로우캘리 판교점', '크래버 대게나라 판교점','마케집 판교점'])
+result = vector_filter_search_faiss("양도 넉넉하고 푸짐한", ['슬로우캘리 판교점', '크래버 대게나라 판교점','마케집 판교점'], "ktb-faiss-index")
 for doc in result :
         print(doc)
 ~~~
@@ -76,6 +113,19 @@ page_content='양도 푸짐하고 신선도 최고인 곳' metadata={'restaurant
 page_content='양도푸짐하고 맛있어요자주 이용합니다' metadata={'restaurant': '슬로우캘리 판교점'}
 ~~~
 
+#### 리뷰 검색+필터링
+~~~python
+result  = get_weather()
+print(result)
+~~~
+~~~python
+    기온 : 27
+    강수확률 : 30
+    강수형태 : 없음
+    습도 : 75
+~~~
+
+
 ### 사용기술스택
 
 - python
@@ -85,28 +135,5 @@ page_content='양도푸짐하고 맛있어요자주 이용합니다' metadata={'
 - langchain
 - fastapi
 
-### 추가 구현 사항
-
-1. 유저의 text를 받아서 직접 선택한 땡기는 맛 외의 추천 맛을 산출해서 백엔드로 보내기
-2. 날씨데이터 받아오기 (api 활용)
-~~~
-    다음 정보를 바탕으로 적절한 음식을 추천해 주세요.
-
-    음식 목록: {food_list}
-    비선호 음식: {disliked_foods}
-    오늘의 기분: {mood}
-    날씨: {weather}
-    선호하는 맛: {preferred_taste}
-
-    1. 사용자의 기분과 날씨를 고려하여 추천해 주세요.
-    2. 비선호 음식을 제외한 음식 중에서 추천해 주세요.
-    3. 선호하는 맛을 고려하여 추천해 주세요.
-    4. 추천할 음식은 음식 목록에서만 선택해 주세요.
-    5. 추천 음식의 이유를 간단히 설명해 주세요.
-
-    출력 형식:
-    추천 음식: [추천 음식 이름]
-    이유: [추천 이유]
-~~~
 
 
