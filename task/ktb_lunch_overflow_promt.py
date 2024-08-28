@@ -2,7 +2,7 @@ import os
 import time
 from openai import OpenAI
 from dotenv import load_dotenv
-from task.weather_api import get_weather
+from weather_api import get_weather
 import json
 
 dotenv_path = '../.env' 
@@ -163,6 +163,7 @@ def food_category_descriptions(food, descriptions):
     3. 선호하는 맛을 고려하여 추천해 주세요.
     4. 추천할 음식은 음식 목록에서만 선택해 주세요.
     5. 추천 음식의 이유를 간단히 설명해 주세요.
+    6. 추천하는 순서대로 출력해주세요.
 
     출력 형식:
     추천 음식: [추천 음식 이름]
@@ -173,12 +174,15 @@ def food_category_descriptions(food, descriptions):
 def recommend_food(food_list, disliked_foods, mood, preferred_taste):
     weather = get_weather()
     promt = f"""
-            당신은 음식 전문가입니다. 다음 정보를 바탕으로 적절한 음식을 추천해서 순위를 매겨주세요.
-            1. 사용자의 기분과 날씨를 고려하여 추천해 주세요.
-            2. 비선호 음식과 선호하는 맛을 고려하여 추천해 주세요.
-            3. 추천할 음식은 음식 목록에서만 선택해 주세요.
-            4. 추천 음식의 이유를 간단히 설명해 주세요.
-            JSON형식으로 출력해주세요.
+            당신은 음식 전문가입니다. 
+            다음의 과정을 통해 음식을 추천합니다.            
+            1. 사용자의 기분과 날씨를 고려하여 추천합니다.
+            2. 비선호 음식과 선호하는 맛을 고려하여 추천합니다.
+            3. 추천할 음식은 음식 목록에서만 선택합니다.
+            4. 추천 음식의 이유를 간단히 설명합니다.
+            5. 추천하는 순서대로 출력합니다.
+
+            JSON형식으로 출력합니다.
             """
     response = client.chat.completions.create(
             model=MODEL,
@@ -211,13 +215,15 @@ if __name__ == "__main__":
     descriptions = "베트남 땡초고추와 마늘로 매콤한 맛을 낸 스페셜 양념치킨"
     recommendation, response= food_category(food)
     print(recommendation)
+
     recommendation, response= food_category_descriptions(food, descriptions)
     print(recommendation)
+    """
     print(type(recommendation))
     json_obj = json.loads(recommendation)
     print(json_obj)
     print(type(json_obj))
-
+    """
     food_list = ["피자", "파스타", "햄버거", "샐러드", "수프"]
     disliked_foods = ["햄버거"]
     mood = "스트레스 해소가 필요함"
@@ -225,4 +231,4 @@ if __name__ == "__main__":
 
     recommendation, response= recommend_food(food_list, disliked_foods, mood, preferred_taste)
     print(recommendation)
-    print(response)
+    #print(response)
