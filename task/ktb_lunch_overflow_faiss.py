@@ -7,7 +7,8 @@ from langchain_community.vectorstores import FAISS
 from langchain.retrievers import EnsembleRetriever
 from dotenv import load_dotenv
 
-load_dotenv()
+dotenv_path = '../.env' 
+load_dotenv(dotenv_path=dotenv_path)
 api_key = os.getenv("OPENAI_API_KEY")
 DBPATH=os.getenv("DBPATH")
 embeddings = OpenAIEmbeddings()

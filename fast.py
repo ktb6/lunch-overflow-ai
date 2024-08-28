@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile
 from typing import Dict, Any
 import json
 from pydantic import BaseModel
+from task.weather_api import get_weather
 from task.ktb_lunch_overflow_promt import *
 from task.ktb_lunch_overflow_faiss import *
 
@@ -59,17 +60,15 @@ def meta_search_db(search_query: SearchQuery):
     return result
 
 
-class IndexName(BaseModel):
-    name: str
-
-@app.post("/api/upload/")
-async def upload_json(index_name: IndexName, file: UploadFile = File(...)):
+@app.post("/api/upload")
+async def upload_json(index_name: str = "ktb_faiss", file: UploadFile = File(...)):
     contents = await file.read()
+
     try:
         data = json.loads(contents.decode('utf-8'))
     except json.JSONDecodeError as e:
         return {"error": "Invalid JSON", "message": str(e)}
-    
+
     if isinstance(data, list):
         reviews_df = data[:5]
     elif isinstance(data, dict):
@@ -77,5 +76,14 @@ async def upload_json(index_name: IndexName, file: UploadFile = File(...)):
     else:
         reviews_df = data
 
-    build_faiss_db(pd.DataFrame(reviews_df), index_name.name)
-    return {"index_name": index_name.name}
+    try:
+        df = pd.DataFrame(reviews_df)
+    except Exception as e:
+        return {"error": "Failed to create DataFrame", "message": str(e)}
+
+    try:
+        build_faiss_db(df, index_name)
+    except Exception as e:
+        return {"error": "Failed to build FAISS DB", "message": str(e)}
+
+    return {"index_name": index_name}

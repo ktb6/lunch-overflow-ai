@@ -4,7 +4,8 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 
-load_dotenv()
+dotenv_path = '../.env' 
+load_dotenv(dotenv_path=dotenv_path)
 api_key = os.getenv("WEATHER_API_KEY")
 
 def extract_fcst_value(data, category):
