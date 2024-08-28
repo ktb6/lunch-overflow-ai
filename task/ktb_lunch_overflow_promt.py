@@ -2,7 +2,7 @@ import os
 import time
 from openai import OpenAI
 from dotenv import load_dotenv
-from weather_api import get_weather
+from task.weather_api import get_weather
 import json
 
 dotenv_path = '../.env' 
