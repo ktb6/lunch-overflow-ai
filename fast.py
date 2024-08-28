@@ -2,8 +2,8 @@ from fastapi import FastAPI, File, UploadFile
 from typing import Dict, Any
 import json
 from pydantic import BaseModel
-from ktb_lunch_overflow_promt import *
-from ktb_lunch_overflow_faiss import *
+from task.ktb_lunch_overflow_promt import *
+from task.ktb_lunch_overflow_faiss import *
 
 app = FastAPI()
 
