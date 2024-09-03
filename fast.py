@@ -74,6 +74,14 @@ def meta_search_db(search_query: SearchQuery):
     result = vector_filter_search_faiss(search_query.query, search_query.metadata, search_query.name)
     return result
 
+class SummarizeQuery(BaseModel):
+    json_path: str
+    store_name: str
+
+@app.post("/api/review_summarize")
+def meta_search_db(summarize_query: SummarizeQuery):
+    result = summarize(summarize_query.store_name, summarize_query.json_path)
+    return result
 
 @app.post("/api/upload")
 async def upload_json(index_name: str = "ktb_faiss", file: UploadFile = File(...)):
