@@ -6,8 +6,10 @@ import pandas as pd
 from langchain_community.vectorstores import FAISS
 from langchain.retrievers import EnsembleRetriever
 from dotenv import load_dotenv
+from pathlib import Path
 
-dotenv_path = '../.env' 
+# 상위 폴더의 .env 파일 경로 설정
+dotenv_path = Path(__file__).resolve().parent.parent / '.env'
 load_dotenv(dotenv_path=dotenv_path)
 api_key = os.getenv("OPENAI_API_KEY")
 DBPATH=os.getenv("DBPATH")

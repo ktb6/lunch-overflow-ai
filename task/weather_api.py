@@ -3,8 +3,10 @@ import json
 import os
 from dotenv import load_dotenv
 from datetime import datetime
+from pathlib import Path
 
-dotenv_path = '../.env' 
+# 상위 폴더의 .env 파일 경로 설정
+dotenv_path = Path(__file__).resolve().parent.parent / '.env'
 load_dotenv(dotenv_path=dotenv_path)
 api_key = os.getenv("WEATHER_API_KEY")
 

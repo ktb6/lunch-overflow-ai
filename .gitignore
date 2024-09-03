@@ -226,7 +226,11 @@ pyrightconfig.json
 .ionide
 
 
-#Dockerfile
-Dockerfile
+client.py
+test_docker.py
+ktb_faiss.faiss
+ktb_faiss.pkl
+
+
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,python,visualstudiocode

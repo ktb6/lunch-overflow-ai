@@ -4,12 +4,15 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from task.weather_api import get_weather
 import json
+from pathlib import Path
 
-dotenv_path = '../.env' 
+# 상위 폴더의 .env 파일 경로 설정
+dotenv_path = Path(__file__).resolve().parent.parent / '.env'
 load_dotenv(dotenv_path=dotenv_path)
 
 OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
 MODEL="gpt-4o-mini"
+
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 food_list = [
@@ -58,13 +61,16 @@ def food_category(food):
             taste_texture_temperature에서 음식에 해당하는 값을 반환합니다.
             하나의 음식이 여러 값을 가질 수 있습니다.
             JSON형식으로 출력해주세요.
-            "food":
-                "food_list": [
-                ],
-            "taste_texture_temperature": [
-            ],
-            "reason" : [
-            ]
+            {{
+                "food": {{
+                    "food_list": [
+                    ],
+                    "taste_texture_temperature": [
+                    ],
+                    "reason" : [
+                    ]
+                }}
+            }}
             '''
     response = client.chat.completions.create(
             model=MODEL,

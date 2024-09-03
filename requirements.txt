@@ -12,3 +12,4 @@ requests
 langchain_openai
 python-multipart
 datetime
+pathlib

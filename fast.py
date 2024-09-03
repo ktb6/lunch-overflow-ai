@@ -5,8 +5,23 @@ from pydantic import BaseModel
 from task.weather_api import get_weather
 from task.ktb_lunch_overflow_promt import *
 from task.ktb_lunch_overflow_faiss import *
+from task.ktb_lunch_overflow_summarize import *
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+    "http://localhost:4000",
+    "http://localhost:3000",
+]
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # 기본 라우트
 @app.get("/")
